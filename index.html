@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0f766e">
+  <title>TIAGO — Medicine Reminder</title>
+  <style>
+    :root { --teal:#0f766e; --teal-dark:#115e59; --bg:#f4f8f8; --ink:#183333; --muted:#617575; --line:#dce8e7; --white:#fff; --red:#b42318; }
+    * { box-sizing:border-box; }
+    body { margin:0; font-family:Arial,Helvetica,sans-serif; background:var(--bg); color:var(--ink); }
+    header { background:linear-gradient(135deg,#0f766e,#164e63); color:white; padding:24px 18px; }
+    .wrap { width:min(1000px, calc(100% - 28px)); margin:auto; }
+    .brand { font-size:30px; font-weight:800; letter-spacing:2px; }
+    header p { margin:8px 0 0; color:#d8f3ef; }
+    main { padding:22px 0 44px; }
+    .grid { display:grid; grid-template-columns:1fr 1.2fr; gap:18px; align-items:start; }
+    .card { background:var(--white); border:1px solid var(--line); border-radius:16px; padding:20px; box-shadow:0 6px 22px #1233330b; margin-bottom:18px; }
+    h2 { font-size:19px; margin:0 0 16px; }
+    label { display:block; font-size:13px; font-weight:700; margin:12px 0 6px; }
+    input, select, textarea { width:100%; padding:11px 12px; border:1px solid #cbd8d7; border-radius:9px; background:#fff; color:var(--ink); font:inherit; }
+    textarea { min-height:70px; resize:vertical; }
+    .row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    button { border:0; border-radius:9px; padding:11px 14px; font-weight:700; cursor:pointer; background:var(--teal); color:#fff; }
+    button:hover { background:var(--teal-dark); }
+    button.secondary { background:#e5f3f1; color:var(--teal-dark); }
+    button.danger { background:#fff0ef; color:var(--red); }
+    .actions { display:flex; gap:8px; flex-wrap:wrap; margin-top:14px; }
+    .muted { color:var(--muted); font-size:13px; line-height:1.5; }
+    .hidden { display:none !important; }
+    .pill { display:inline-block; border-radius:100px; padding:4px 9px; font-size:12px; font-weight:700; background:#e5f3f1; color:var(--teal-dark); }
+    .medicine { border:1px solid var(--line); border-radius:12px; padding:14px; margin:12px 0; }
+    .medicine h3 { margin:0 0 6px; font-size:16px; }
+    .medicine p { margin:5px 0; font-size:13px; line-height:1.5; }
+    .schedule-item { display:flex; justify-content:space-between; gap:12px; padding:12px 0; border-bottom:1px solid var(--line); }
+    .schedule-item:last-child { border-bottom:0; }
+    .time { font-weight:800; color:var(--teal-dark); white-space:nowrap; }
+    .notice { border-left:4px solid #d99b21; background:#fff8e8; padding:12px; border-radius:8px; font-size:13px; line-height:1.5; }
+    footer { padding:0 0 30px; text-align:center; color:var(--muted); font-size:12px; }
+    @media(max-width:720px) { .grid { grid-template-columns:1fr; } .row { grid-template-columns:1fr; } .card { padding:16px; } }
+  </style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="brand">TIAGO</div>
+    <p>Your simple medicine adherence companion</p>
+  </div>
+</header>
+<main class="wrap">
+  <section id="loginCard" class="card">
+    <h2>Patient demo profile</h2>
+    <p class="muted">Enter sample details to explore the demo. This prototype stores information only in this browser.</p>
+    <form id="loginForm">
+      <label for="patientName">Patient name</label><input id="patientName" required maxlength="80" placeholder="Your name">
+      <label for="whatsapp">WhatsApp number</label><input id="whatsapp" required inputmode="tel" placeholder="+91 98765 43210">
+      <label for="age">Age (optional)</label><input id="age" type="number" min="1" max="120" placeholder="Age">
+      <div class="actions"><button type="submit">Open demo</button></div>
+    </form>
+  </section>
+
+  <section id="app" class="hidden">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;gap:12px;align-items:start;flex-wrap:wrap">
+        <div><h2 id="welcome">Welcome</h2><p id="profileLine" class="muted"></p></div>
+        <div class="actions" style="margin-top:0"><button id="editProfileBtn" class="secondary" type="button">Edit profile</button><button id="logoutBtn" class="secondary" type="button">Log out</button></div>
+      </div>
+      <div class="notice">Reminder times are planning aids only. Follow the prescription and your doctor or pharmacist’s instructions. This demo does not send real WhatsApp messages or provide medical advice.</div>
+    </div>
+    <div class="grid">
+      <div>
+        <div class="card">
+          <h2 id="formTitle">Add a medicine</h2>
+          <form id="medicineForm">
+            <input id="medicineId" type="hidden">
+            <label for="medName">Medicine brand / name *</label><input id="medName" required maxlength="100" placeholder="Medicine name">
+            <label for="genericName">Generic name (optional)</label><input id="genericName" maxlength="100" placeholder="Generic name">
+            <div class="row">
+              <div><label for="dose">Dose / strength</label><input id="dose" placeholder="As prescribed"></div>
+              <div><label for="frequency">Times per day</label><select id="frequency"><option value="1">1 time</option><option value="2">2 times</option><option value="3" selected>3 times</option><option value="4">4 times</option></select></div>
+            </div>
+            <div class="row">
+              <div><label for="duration">Course duration (days)</label><input id="duration" type="number" min="1" max="365" value="7" required></div>
+              <div><label for="startDate">Start date</label><input id="startDate" type="date" required></div>
+            </div>
+            <label for="food">Food instruction</label><select id="food"><option value="As prescribed">As prescribed</option><option value="Before food">Before food</option><option value="After food">After food</option><option value="With food">With food</option><option value="Without food">Without food</option></select>
+            <label>Daily reminder times</label>
+            <div class="row">
+              <div><input id="time1" type="time" value="09:00" aria-label="Reminder time 1"></div>
+              <div><input id="time2" type="time" value="14:00" aria-label="Reminder time 2"></div>
+              <div><input id="time3" type="time" value="21:00" aria-label="Reminder time 3"></div>
+              <div><input id="time4" type="time" value="22:00" aria-label="Reminder time 4"></div>
+            </div>
+            <label for="notes">Doctor / pharmacist notes (optional)</label><textarea id="notes" placeholder="Only enter instructions provided by your healthcare professional"></textarea>
+            <div class="actions"><button type="submit">Save medicine</button><button id="cancelEditBtn" class="secondary hidden" type="button">Cancel edit</button></div>
+          </form>
+        </div>
+      </div>
+      <div>
+        <div class="card"><h2>Today's schedule</h2><div id="schedule"><p class="muted">No medicines added yet.</p></div></div>
+        <div class="card"><h2>Your medicines</h2><div id="medicineList"><p class="muted">No medicines added yet.</p></div><div class="actions"><button id="clearBtn" class="danger" type="button">Clear all medicines</button><button id="notifyBtn" class="secondary" type="button">Enable browser notifications</button></div><p id="notifyStatus" class="muted"></p></div>
+      </div>
+    </div>
+  </section>
+</main>
+<footer class="wrap">TIAGO demo prototype · No real authentication, cloud sync, or WhatsApp delivery.</footer>
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const today = () => new Date().toLocaleDateString('en-CA');
+  let profile = null, medicines = [], editingId = null;
+  const load = () => {
+    try { profile = JSON.parse(localStorage.getItem('tiagoProfile') || 'null'); medicines = JSON.parse(localStorage.getItem('tiagoMedicines') || '[]'); }
+    catch { profile = null; medicines = []; }
+    render();
+  };
+  const save = () => { localStorage.setItem('tiagoProfile', JSON.stringify(profile)); localStorage.setItem('tiagoMedicines', JSON.stringify(medicines)); };
+  const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const dateAdd = (date, days) => { const d = new Date(date + 'T12:00:00'); d.setDate(d.getDate() + days); return d.toLocaleDateString('en-CA'); };
+  const statusOf = med => today() < med.startDate ? 'Upcoming' : today() >= dateAdd(med.startDate, Number(med.duration)) ? 'Completed' : 'Active';
+  function render() {
+    $('loginCard').classList.toggle('hidden', !!profile);
+    $('app').classList.toggle('hidden', !profile);
+    if (!profile) return;
+    $('welcome').textContent = 'Hello, ' + profile.name;
+    $('profileLine').textContent = 'WhatsApp: ' + profile.whatsapp + (profile.age ? ' · Age: ' + profile.age : '');
+    const active = medicines.filter(m => statusOf(m) === 'Active');
+    const entries = [];
+    active.forEach(m => m.times.slice(0, Number(m.frequency)).forEach(t => entries.push({time:t, name:m.name, dose:m.dose, food:m.food})));
+    entries.sort((a,b) => a.time.localeCompare(b.time));
+    $('schedule').innerHTML = entries.length ? entries.map(e => `<div class="schedule-item"><div><strong>${escapeHtml(e.name)}</strong><div class="muted">${escapeHtml(e.dose || 'Dose as prescribed')} · ${escapeHtml(e.food)}</div></div><div class="time">${escapeHtml(e.time)}</div></div>`).join('') : '<p class="muted">No active medicines scheduled for today.</p>';
+    $('medicineList').innerHTML = medicines.length ? medicines.map(m => `<div class="medicine"><div style="display:flex;justify-content:space-between;gap:8px;align-items:start"><h3>${escapeHtml(m.name)}</h3><span class="pill">${statusOf(m)}</span></div><p>${m.generic ? 'Generic: ' + escapeHtml(m.generic) + ' · ' : ''}${escapeHtml(m.dose || 'Dose as prescribed')}</p><p>${escapeHtml(m.frequency)} time(s)/day · ${escapeHtml(m.duration)} days · Start: ${escapeHtml(m.startDate)}</p><p>Food: ${escapeHtml(m.food)} · Times: ${m.times.slice(0,Number(m.frequency)).map(escapeHtml).join(', ')}</p>${m.notes ? `<p>Notes: ${escapeHtml(m.notes)}</p>` : ''}<div class="actions"><button class="secondary" type="button" data-edit="${m.id}">Edit</button><button class="danger" type="button" data-delete="${m.id}">Remove</button></div></div>`).join('') : '<p class="muted">No medicines added yet.</p>';
+  }
+  $('loginForm').addEventListener('submit', e => {
+    e.preventDefault();
+    profile = {name:$('patientName').value.trim(), whatsapp:$('whatsapp').value.trim(), age:$('age').value};
+    save(); render();
+  });
+  $('editProfileBtn').addEventListener('click', () => {
+    const name = prompt('Patient name', profile.name); if (name === null) return;
+    const phone = prompt('WhatsApp number', profile.whatsapp); if (phone === null) return;
+    profile.name = name.trim() || profile.name; profile.whatsapp = phone.trim() || profile.whatsapp; save(); render();
+  });
+  $('logoutBtn').addEventListener('click', () => { profile = null; localStorage.removeItem('tiagoProfile'); render(); });
+  function resetForm() {
+    $('medicineForm').reset(); $('medicineId').value = ''; $('duration').value = 7; $('startDate').value = today();
+    $('time1').value='09:00'; $('time2').value='14:00'; $('time3').value='21:00'; $('time4').value='22:00';
+    editingId = null; $('formTitle').textContent = 'Add a medicine'; $('cancelEditBtn').classList.add('hidden');
+  }
+  $('medicineForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const frequency = Number($('frequency').value);
+    const item = {id:editingId || String(Date.now()), name:$('medName').value.trim(), generic:$('genericName').value.trim(), dose:$('dose').value.trim(), frequency, duration:Number($('duration').value), startDate:$('startDate').value, food:$('food').value, times:[$('time1').value,$('time2').value,$('time3').value,$('time4').value], notes:$('notes').value.trim()};
+    if (!item.startDate || item.duration < 1 || !item.name) return;
+    if (editingId) medicines = medicines.map(m => m.id === editingId ? item : m); else medicines.push(item);
+    save(); resetForm(); render();
+  });
+  $('medicineList').addEventListener('click', e => {
+    const edit = e.target.closest('[data-edit]'), del = e.target.closest('[data-delete]');
+    if (edit) {
+      const m = medicines.find(x => x.id === edit.dataset.edit); if (!m) return;
+      editingId=m.id; $('medicineId').value=m.id; $('medName').value=m.name; $('genericName').value=m.generic; $('dose').value=m.dose; $('frequency').value=m.frequency; $('duration').value=m.duration; $('startDate').value=m.startDate; $('food').value=m.food; $('notes').value=m.notes;
+      m.times.forEach((t,i) => $('time'+(i+1)).value=t || '09:00');
+      $('formTitle').textContent='Edit medicine'; $('cancelEditBtn').classList.remove('hidden'); $('medName').focus(); window.scrollTo({top:0,behavior:'smooth'});
+    }
+    if (del && confirm('Remove this medicine?')) { medicines=medicines.filter(m => m.id !== del.dataset.delete); save(); render(); }
+  });
+  $('cancelEditBtn').addEventListener('click', resetForm);
+  $('clearBtn').addEventListener('click', () => { if (confirm('Clear all medicines from this browser?')) { medicines=[]; save(); render(); } });
+  $('notifyBtn').addEventListener('click', async () => {
+    if (!('Notification' in window)) { $('notifyStatus').textContent='Notifications are not supported in this browser.'; return; }
+    const result = await Notification.requestPermission();
+    $('notifyStatus').textContent = result === 'granted' ? 'Permission enabled. This demo cannot reliably send scheduled background reminders.' : 'Notification permission was not granted.';
+  });
+  $('startDate').value = today();
+  load();
+})();
+</script>
+</body>
+</html>
